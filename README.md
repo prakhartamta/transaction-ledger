@@ -118,7 +118,7 @@ There are 21 tests, one for each assessment requirement. Every test creates its 
 | File | Assessment section | Checks |
 |---|---|---|
 | `test_accounts.py` | 1. Create account, 3. Get balance | New account starts at 0. Client can't set the balance. Name is required. Balance endpoint works. Unknown account returns 404. |
-| `test_transactions.py` | 2. Add transaction, 5. Data integrity, 7. Validations | Spec example: 100 + 50 − 30 − 20 = 100. Insufficient balance returns 422 and leaves the balance unchanged. Duplicate `reference_id` returns 409 and leaves the balance unchanged. The same `reference_id` works on another account. Invalid type, a zero amount or a missing `reference_id` returns 422. Unknown account returns 404. No route can edit or delete a transaction (405). |
+| `test_transactions.py` | 2. Add transaction, 5. Data integrity, 7. Validations | Spec example: 100 + 50 − 30 − 20 = 100. Insufficient balance returns 422 and leaves the balance unchanged. Duplicate `reference_id` returns 409 and leaves the balance unchanged. The same `reference_id` works on another account. Invalid type, a zero amount, a missing `reference_id` or a description over 255 characters returns 422. Unknown account returns 404. No route can edit or delete a transaction (405). |
 | `test_history.py` | 4. Transaction history | Latest first. Filter by `type`. Pagination metadata. Invalid `page` or `limit` returns 422. |
 | `test_transfers.py` | 9. Money transfer | Spec example: A 100, B 50, transfer 30 ends at 70 and 80. A failed transfer changes neither account. Both accounts must exist. |
 | `test_concurrency.py` | 5. Data consistency | 20 parallel debits of 10 on a balance of 100: exactly 10 succeed and the balance ends at 0. 5 parallel requests with the same `reference_id`: exactly 1 succeeds. |
@@ -141,7 +141,7 @@ The concurrency tests send every request from its own thread with its own databa
 
 ## Assumptions
 
-- `description` is optional.
+- `description` is optional, up to 255 characters.
 - Amounts must be greater than 0, with at most 2 decimal places and at most 16 digits before the decimal point, which fits `NUMERIC(18,2)`.
 - A duplicate `reference_id` returns **409** with the existing transaction. The new payload is not compared with the original.
 - Insufficient balance returns **422**.

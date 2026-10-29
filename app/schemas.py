@@ -13,6 +13,7 @@ def _to_cents(value: Decimal) -> Decimal:
 
 NonBlankStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 ReferenceId = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+Description = Annotated[str, StringConstraints(max_length=255)]
 # max_digits matches NUMERIC(18,2), so an oversized amount is a 422 instead of a DB error.
 Money = Annotated[Decimal, Field(gt=0, max_digits=18, decimal_places=2), AfterValidator(_to_cents)]
 TransactionType = Literal["credit", "debit"]
@@ -44,7 +45,7 @@ class TransactionCreate(BaseModel):
 
     type: TransactionType
     amount: Money
-    description: str | None = None
+    description: Description | None = None
     reference_id: ReferenceId
 
 
@@ -79,7 +80,7 @@ class TransferCreate(BaseModel):
     from_account_id: uuid.UUID
     to_account_id: uuid.UUID
     amount: Money
-    description: str | None = None
+    description: Description | None = None
     reference_id: ReferenceId
 
 

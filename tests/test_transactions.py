@@ -48,6 +48,7 @@ def test_invalid_transactions_are_rejected(client):
         {"type": "refund", "amount": 10, "reference_id": "r1"},  # type must be credit or debit
         {"type": "credit", "amount": 0, "reference_id": "r1"},  # amount must be > 0
         {"type": "credit", "amount": 10},  # reference_id is required
+        {"type": "credit", "amount": 10, "reference_id": "r1", "description": "x" * 256},  # too long
     ]
 
     for body in invalid_bodies:
